@@ -1,0 +1,2 @@
+# NovaTechAdmin
+Repo for Administrator
