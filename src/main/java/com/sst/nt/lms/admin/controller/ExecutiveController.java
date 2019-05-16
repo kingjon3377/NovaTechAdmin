@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -194,7 +196,7 @@ public final class ExecutiveController {
 	public Loan overrideDueDate(@PathVariable("bookId") final int bookId,
 			@PathVariable("branchId") final int branchId,
 			@PathVariable("borrowerId") final int borrowerId,
-			@RequestParam final LocalDate dueDate) throws TransactionException {
+			@RequestParam @DateTimeFormat(iso = ISO.DATE) final LocalDate dueDate) throws TransactionException {
 		final Book book = service.getBook(bookId);
 		final Branch branch = service.getBranch(branchId);
 		final Borrower borrower = service.getBorrower(borrowerId);
