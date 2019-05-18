@@ -1,6 +1,7 @@
 package com.sst.nt.lms.admin.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -206,7 +207,7 @@ public final class ExecutiveController {
 	public Loan overrideDueDate(@PathVariable("bookId") final int bookId,
 			@PathVariable("branchId") final int branchId,
 			@PathVariable("borrowerId") final int borrowerId,
-			@RequestParam @DateTimeFormat(iso = ISO.DATE) final LocalDate dueDate) throws TransactionException {
+			@RequestBody final LocalDate dueDate) throws TransactionException {
 		final Book book = service.getBook(bookId);
 		final Branch branch = service.getBranch(branchId);
 		final Borrower borrower = service.getBorrower(borrowerId);
@@ -245,5 +246,27 @@ public final class ExecutiveController {
 				return loan.getDueDate();
 			}
 		}
+	}
+
+	/**
+	 * Get all book loans the borrower has borrowed from any library branch.
+	 *
+	 * @param cardNo id for a particular borrower
+	 * @return 200(OK) if the borrower exists in the database and if everything goes
+	 *         correctly or will return 500(an internal server error) the roll back
+	 *         fails
+	 * @throws TransactionException retrieve exception if it cannot find the given
+	 *                              borrower
+	 */
+	@GetMapping(path = "/borrowers/{cardNo}/loans")
+	public ResponseEntity<List<Loan>> getAllBorrowedBooks(
+			@PathVariable("cardNo") final int cardNo) throws TransactionException {
+		final Borrower foundBorrower = service.getBorrower(cardNo);
+		if (foundBorrower == null) {
+			throw new RetrieveException("Requested borrower not found");
+		}
+		final List<Loan> listOfLoansForBorrower = service
+				.getAllBorrowedBooks(foundBorrower);
+		return new ResponseEntity<>(listOfLoansForBorrower, HttpStatus.OK);
 	}
 }
