@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -425,6 +426,18 @@ public final class AdministratorServiceImpl implements AdministratorService {
 		} catch (final DataAccessException except) {
 			LOGGER.log(Level.SEVERE, "SQL error while getting a Loan record", except);
 			throw rollback(new RetrieveException("Getting a Loan failed", except));
+		}
+	}
+	@Override
+	public List<Loan> getAllBorrowedBooks(final Borrower borrower)
+			throws TransactionException {
+		try {
+			return loansDao.findAll().parallelStream()
+					.filter(loan -> borrower.equals(loan.getBorrower()))
+					.collect(Collectors.toList());
+		} catch (final DataAccessException except) {
+			LOGGER.log(Level.SEVERE, "SQL error while getting loan records", except);
+			throw rollback(new RetrieveException("Getting loan records failed", except));
 		}
 	}
 }

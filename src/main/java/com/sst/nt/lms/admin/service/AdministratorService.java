@@ -238,4 +238,13 @@ public interface AdministratorService extends Service {
 	 * @return a Loan in the database
 	 */
 	Loan getLoan(int cardNo, int branchId, int bookId) throws TransactionException;
+
+	/**
+	 * Get all book loans the borrower has borrowed from any library branch.
+	 *
+	 * @param borrower in question
+	 * @return the list of book loans the borrower has out from any library.
+	 * @throws TransactionException if something goes wrong with the retrieval
+	 */
+	List<Loan> getAllBorrowedBooks(Borrower borrower) throws TransactionException;
 }
